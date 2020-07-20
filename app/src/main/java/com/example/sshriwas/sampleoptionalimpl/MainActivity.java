@@ -23,12 +23,13 @@ public class MainActivity extends AppCompatActivity {
 
         //2. Now suppose we need to fetch version of some USB. Then this would be the
         //earlier approach
-        new Computer().getmSoundCard().getmUsb().getVersion();
+        //new Computer().getmSoundCard().getmUsb().getVersion();
 
         //but the above statement may throw null pointer exception at various places.
         //Such as if the computer doesn't have a sound card or the sound card doesn't have USB
         //and so on.
         // To mitigate this we earlier checked null condition using if-statement as follows-
+        //Imperative code approach -
         Computer mComputer = new Computer();
         if (mComputer != null){
             Soundcard mSoundCard = mComputer.getmSoundCard();
@@ -40,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
+
         //As it can be seen that above code contains so many if conditons. This makes the code
         //bulky and difficult to read. Also the code is still prone to further null pointer exceptions
         //if and where the user may have forgotten to add an if-statement. So its not completely
@@ -54,7 +56,18 @@ public class MainActivity extends AppCompatActivity {
 
         //3. Creating Optional objects
         //First this is how to create an empty Optional:
+        //Optional<Soundcard> optionalEmptySoundcard = Optional.empty();
         Optional<Soundcard> optionalEmptySoundcard = Optional.empty();
+
+        //an empty optional object is an Optional with null object? NO. Empty Optional is an Optional
+        //with no value.
+        //Below if condition throws RuntimeException: Caused by: java.util.NoSuchElementException: No value present
+        //Maybe since empty Optional does not hold any value, so it is not possible to call get() on it.
+        /*if (optionalEmptySoundcard.get() == null) {
+            System.out.println("Empty Optional is an Optional which contains null object");
+        } else {
+            System.out.println("Empty Optional is an Optional which does not contain null object");
+        }*/
 
         //Optional with non-null value -
         //If soundcard were null, a NullPointerException would be immediately thrown
@@ -100,7 +113,11 @@ public class MainActivity extends AppCompatActivity {
         //There is also orElseThrow(Supplier<T> exceptionSupplier) which will throw an exception if optional instance is null
         //Note: Supplier is another functional interface that accepts no input parameter but returns a value. It is used for
         //lazy generation of values.
-        Soundcard MyOptionalSoundCard3 = myOptionalSoundCard.orElseThrow(()-> new IllegalStateException());
+        try {
+            Soundcard MyOptionalSoundCard3 = myOptionalSoundCard.orElseThrow(()-> new IllegalStateException());
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
 
         //Using Optional.filter() to check some property. Filter takes a predicate as an argument
         //a predicate is a functional interface whose method accepts a parameter and returns a boolean
